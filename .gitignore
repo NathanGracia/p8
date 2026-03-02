@@ -1,0 +1,44 @@
+# Dataset (trop volumineux)
+data/
+*.zip
+
+# Modèles entraînés (trop volumineux)
+models/*.h5
+models/*.keras
+
+# Logs TensorBoard
+logs/tensorboard_*/
+
+# Cache Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Environnements virtuels
+venv/
+env/
+.venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Claude
+.claude/
+
+# Fichiers temporaires
+*.tmp
+*.log
+server.log
+streamlit.log
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db

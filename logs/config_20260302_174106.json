@@ -1,0 +1,24 @@
+{
+  "data_root": "../data",
+  "img_size": [
+    128,
+    256
+  ],
+  "batch_size": 4,
+  "augmentation": false,
+  "oversample_rare_classes": false,
+  "oversample_factor": 3,
+  "model_type": "unet_mobilenet",
+  "num_classes": 8,
+  "learning_rate": 0.0001,
+  "dice_weight": 0.5,
+  "encoder_freeze": false,
+  "epochs": 20,
+  "validation_split": 0.0,
+  "early_stopping_patience": 10,
+  "reduce_lr_patience": 5,
+  "reduce_lr_factor": 0.5,
+  "model_dir": "../models",
+  "logs_dir": "../logs",
+  "save_best_only": true
+}
