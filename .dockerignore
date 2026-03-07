@@ -1,0 +1,13 @@
+data/
+models/
+logs/
+notebooks/
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+.git/
+*.log
+*.pid
+*.bat
+*.sh

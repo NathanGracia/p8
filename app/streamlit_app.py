@@ -25,7 +25,8 @@ st.set_page_config(
     layout="wide",
 )
 
-DEFAULT_API_URL = "http://localhost:8000"
+import os
+DEFAULT_API_URL = os.getenv("API_URL", "http://localhost:8000")
 
 CATEGORY_COLORS = {
     "void":         "#000000",

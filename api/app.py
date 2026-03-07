@@ -38,8 +38,10 @@ from predictor import Predictor  # noqa: E402
 
 # ── Configuration ─────────────────────────────────────────────────────────────
 
-DATA_ROOT = Path(__file__).parent.parent / "data"
-MODEL_PATH = Path(__file__).parent.parent / "models" / "unetmini_20260216_110245.h5"
+import os
+
+DATA_ROOT = Path(os.getenv("DATA_ROOT", str(Path(__file__).parent.parent / "data")))
+MODEL_PATH = Path(os.getenv("MODEL_PATH", str(Path(__file__).parent.parent / "models" / "unet_mobilenet_20260209_132821.h5")))
 
 # ── État global ───────────────────────────────────────────────────────────────
 

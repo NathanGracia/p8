@@ -1,0 +1,34 @@
+services:
+
+  p8-api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    container_name: p8-api
+    volumes:
+      - ./data:/app/data:ro
+      - ./models:/app/models:ro
+    environment:
+      - MODEL_PATH=/app/models/unet_mobilenet_20260209_132821.h5
+      - DATA_ROOT=/app/data
+    networks:
+      - caddy
+    restart: unless-stopped
+
+  p8-streamlit:
+    build:
+      context: .
+      dockerfile: app/Dockerfile
+    container_name: p8-streamlit
+    environment:
+      # URL interne Docker — les appels requests() sont server-side (pas depuis le browser)
+      - API_URL=http://p8-api:8000
+    networks:
+      - caddy
+    depends_on:
+      - p8-api
+    restart: unless-stopped
+
+networks:
+  caddy:
+    external: true
