@@ -59,6 +59,8 @@ def scan_val_images() -> List[dict]:
     images = []
     image_id = 0
 
+    if not val_rgb_dir.exists():
+        return images
     for city_dir in sorted(val_rgb_dir.iterdir()):
         if not city_dir.is_dir():
             continue
