@@ -6,11 +6,11 @@ services:
       dockerfile: api/Dockerfile
     container_name: p8-api
     volumes:
-      - ./data:/app/data:ro
+      - ./samples:/app/samples:ro
       - ./models:/app/models:ro
     environment:
       - MODEL_PATH=/app/models/unet_mobilenet_20260209_132821.h5
-      - DATA_ROOT=/app/data
+      - DATA_ROOT=/app/samples
     networks:
       - caddy
     restart: unless-stopped
