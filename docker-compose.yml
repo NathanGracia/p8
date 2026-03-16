@@ -32,3 +32,4 @@ services:
 networks:
   caddy:
     external: true
+    name: ubuntu_default
