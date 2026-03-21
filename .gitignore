@@ -29,6 +29,7 @@ env/
 
 # Claude
 .claude/
+CLAUDE.md
 
 # Fichiers temporaires
 *.tmp
