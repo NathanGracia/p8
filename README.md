@@ -1,376 +1,165 @@
-# Projet P8 - Segmentation Sémantique pour Véhicule Autonome
+# P8 — Segmentation sémantique pour véhicule autonome
 
-**Projet OpenClassrooms - Ingénieur IA**
-
----
-
-## 📋 Description
-
-Projet de **segmentation sémantique d'images** pour un système embarqué de véhicule autonome. Le modèle doit analyser en temps réel le flux vidéo d'une caméra embarquée et identifier pixel par pixel les éléments de l'environnement urbain (route, trottoirs, véhicules, piétons, obstacles, etc.).
-
-**Entreprise** : Future Vision Transport (conception de systèmes embarqués de vision pour véhicules autonomes)
-
-**Mission** : Concevoir et déployer un modèle de segmentation léger et rapide qui s'intègre dans la chaîne complète du système embarqué.
+**Projet OpenClassrooms — Ingénieur IA**
+**Entreprise** : Future Vision Transport
+**Dataset** : Cityscapes · **Framework** : TensorFlow / Keras 2.16
 
 ---
 
-## 🎯 Objectifs
+## Contexte
 
-1. **Entraîner un modèle de segmentation** sur le dataset Cityscapes (8 catégories principales)
-2. **Développer une API de prédiction** (Flask/FastAPI) déployée sur le Cloud
-3. **Créer une application web de démonstration** (Flask/Streamlit) déployée sur le Cloud
-4. **Garantir des performances adaptées** à un système embarqué (temps d'inférence < 100ms)
+Ce module est le bloc 3 d'une chaîne embarquée de vision pour véhicule autonome :
+
+```
+[Capteurs] → [Prétraitement (Franck)] → [Segmentation (ce module)] → [Décision (Laura)]
+```
+
+Le modèle classifie chaque pixel d'une image en 8 catégories (route, bâtiments, piétons, véhicules...) et expose le résultat via une API REST.
 
 ---
 
-## 🗂️ Structure du projet
+## Résultats
+
+| Expérience | Modèle | Augmentation | val mIoU |
+|-----------|--------|-------------|---------|
+| Baseline | U-Net Mini | Non | 70,1 % |
+| Transfer learning | U-Net + MobileNetV2 | Non | 72,4 % |
+| Meilleur | U-Net Mini | Oui + Oversample ×3 | **74,0 %** |
+
+Objectif fixé : > 60 % mIoU ✅
+
+---
+
+## Services déployés
+
+| Service | URL |
+|---------|-----|
+| Application web (Streamlit) | https://p8.nathangracia.com |
+| API de prédiction (FastAPI) | https://p8-api.nathangracia.com |
+| Documentation API (Swagger) | https://p8-api.nathangracia.com/docs |
+
+---
+
+## Structure
 
 ```
 p8/
-├── data/                           # Dataset Cityscapes
-│   ├── gtFine/                    # Annotations (train/test)
-│   │   ├── train/                 # 2 975 images d'entraînement
-│   │   └── test/                  # 1 525 images de test
-│   └── leftImg8bit/               # Images RGB
-│       ├── train/
-│       └── test/
-│
-├── notebooks/                      # Notebooks Jupyter
-│   ├── 01_EDA_CLEAN.ipynb         # Exploration et analyse des données
-│   ├── 02_Modeling.ipynb          # Modélisation (à créer)
-│   └── test_dataloader.ipynb     # Test du data loader
-│
-├── src/                            # Code source Python
-│   ├── data_loader.py             # Pipeline de chargement des données
-│   ├── model.py                   # Architecture du modèle (à créer)
-│   ├── train.py                   # Script d'entraînement (à créer)
-│   └── utils.py                   # Fonctions utilitaires (à créer)
-│
-├── models/                         # Modèles sauvegardés (à créer)
-│   └── best_model.h5              # Meilleur modèle entraîné
-│
-├── api/                            # API de prédiction (à créer)
-│   ├── app.py                     # API Flask/FastAPI
+├── api/                  # API FastAPI
+│   ├── app.py            # Endpoints REST
+│   ├── predictor.py      # Chargement modèle + inférence
+│   ├── Dockerfile
 │   └── requirements.txt
 │
-├── app/                            # Application web (à créer)
-│   ├── streamlit_app.py           # Interface Streamlit
+├── app/                  # Application web
+│   ├── streamlit_app.py  # Interface de démonstration
+│   ├── Dockerfile
 │   └── requirements.txt
 │
-├── docs/                           # Documentation (à créer)
-│   ├── note_technique.pdf         # Note technique (10 pages)
-│   └── presentation.pptx          # Support de présentation (30 slides max)
+├── src/                  # Code source
+│   ├── data_loader.py    # CityscapesSequence (Keras)
+│   ├── model.py          # Architecture U-Net + métriques + losses
+│   ├── train.py          # Script d'entraînement
+│   └── data_augmentation.py
 │
-├── requirements.txt                # Dépendances Python principales
-├── CLAUDE.md                       # Notes de développement
-└── README.md                       # Ce fichier
+├── notebooks/
+│   ├── 01_EDA_CLEAN.ipynb    # Exploration du dataset
+│   ├── 02_Modeling.ipynb     # Comparaison des expériences
+│   └── test_dataloader.ipynb
+│
+├── models/               # Modèles entraînés
+│   ├── unet_mobilenet_20260209_132821.h5   # U-Net + MobileNetV2 (déployé)
+│   ├── unetmini_20260216_110245.h5         # U-Net Mini baseline
+│   └── unetmini_20260302_021229.h5         # U-Net Mini + augmentation
+│
+├── logs/                 # Résultats des 3 expériences
+│   ├── config_*.json     # Hyperparamètres
+│   ├── history_*.json    # Courbes d'apprentissage
+│   └── *.png             # Figures (distribution, métriques, prédictions)
+│
+├── samples/              # Images de démonstration (val Cityscapes)
+├── data/                 # Dataset Cityscapes complet
+│
+├── docs/
+│   ├── note_technique_P8.docx
+│   ├── generate_note_technique.py
+│   └── DEPLOY.md         # Guide de déploiement VPS
+│
+├── docker-compose.yml
+├── requirements.txt
+└── CLAUDE.md
 ```
 
 ---
 
-## 📊 Dataset : Cityscapes
+## Lancement local
 
-### Statistiques
-
-- **Entraînement** : 2 975 images haute résolution (2048x1024)
-- **Test** : 1 525 images haute résolution
-- **18 villes allemandes** pour le train
-- **6 villes** pour le test
-
-### Les 8 catégories principales
-
-Le projet utilise les **8 catégories principales** (au lieu des 32 sous-catégories) :
-
-| ID | Catégorie      | Description                                      | Couleur   |
-|----|----------------|--------------------------------------------------|-----------|
-| 0  | void           | Pixels non classifiés                            | Noir      |
-| 1  | flat           | Route, trottoir, parking                         | Violet    |
-| 2  | construction   | Bâtiments, murs, clôtures                        | Gris      |
-| 3  | object         | Poteaux, panneaux de signalisation, feux         | Jaune     |
-| 4  | nature         | Végétation, terrain                              | Vert      |
-| 5  | sky            | Ciel                                             | Bleu ciel |
-| 6  | human          | Piétons, cyclistes                               | Rouge     |
-| 7  | vehicle        | Voitures, camions, bus, motos, vélos, trains     | Bleu      |
-
-### Mapping labelIds → Catégories
-
-Cityscapes fournit 34 labelIds (0-33) qu'il faut convertir en 8 catégories :
-
-- **labelIds 0-6** → void (0)
-- **labelIds 7-10** → flat (1)
-- **labelIds 11-16** → construction (2)
-- **labelIds 17-20** → object (3)
-- **labelIds 21-22** → nature (4)
-- **labelId 23** → sky (5)
-- **labelIds 24-25** → human (6)
-- **labelIds 26-33** → vehicle (7)
-
----
-
-## 🚀 Installation
-
-### Prérequis
-
-- Python 3.8+
-- GPU recommandé (CUDA compatible)
-- 8 GB RAM minimum
-
-### Installation des dépendances
+### Avec Docker (recommandé)
 
 ```bash
-# Cloner le dépôt
-git clone <url-du-repo>
-cd p8
-
-# Créer un environnement virtuel
-python -m venv .venv
-source .venv/bin/activate  # Linux/Mac
-.venv\Scripts\activate     # Windows
-
-# Installer les dépendances
-pip install -r requirements.txt
+docker compose up -d
 ```
 
-### Télécharger le dataset
+- App : http://localhost:8501
+- API : http://localhost:8000
+- Docs : http://localhost:8000/docs
 
-Le dataset Cityscapes est déjà inclus dans le dossier `data/`.
-
-Si besoin, télécharger depuis :
-- [gtFine.zip](https://s3-eu-west-1.amazonaws.com/static.oc-static.com/prod/courses/files/AI+Engineer/Project+8+-+Cityscapes/gtFine.zip) (annotations)
-- [leftImg8bit.zip](https://s3-eu-west-1.amazonaws.com/static.oc-static.com/prod/courses/files/AI+Engineer/Project+8+-+Cityscapes/leftImg8bit.zip) (images)
-
----
-
-## 🔧 Utilisation
-
-### 1. Exploration des données
+### Sans Docker
 
 ```bash
-jupyter notebook notebooks/01_EDA_CLEAN.ipynb
+# API
+cd api && uvicorn app:app --reload --port 8000
+
+# App (dans un autre terminal)
+cd app && streamlit run streamlit_app.py
 ```
 
-Ce notebook contient :
-- Visualisation des images et masques
-- Distribution des classes
-- Analyse du déséquilibre
-- Statistiques du dataset
-
-### 2. Entraînement du modèle (à venir)
+### Entraînement
 
 ```bash
-python src/train.py --epochs 50 --batch-size 8 --img-size 256 512
+cd src
+python train.py --model-type unet_mobilenet --epochs 30 --batch-size 8 --augmentation light
 ```
 
-### 3. Évaluation (à venir)
-
-```bash
-python src/evaluate.py --model models/best_model.h5
-```
-
-### 4. API de prédiction (à venir)
-
-```bash
-cd api
-python app.py
-```
-
-L'API sera accessible à `http://localhost:5000/predict`
-
-### 5. Application web (à venir)
-
-```bash
-cd app
-streamlit run streamlit_app.py
-```
+Options disponibles :
+- `--model-type` : `unet_mini` ou `unet_mobilenet`
+- `--augmentation` : `none`, `light`, `heavy`
+- `--img-size` : ex. `128 256` ou `256 512`
+- `--no-oversample` : désactive l'oversampling des classes rares
 
 ---
 
-## 🏗️ Architecture technique
+## API — Endpoints
 
-### Modèle de segmentation
-
-- **Architecture** : U-Net avec encoder pré-entraîné
-- **Encoders possibles** : VGG16, ResNet50, EfficientNetB0 (ImageNet weights)
-- **Framework** : Keras/TensorFlow
-- **Bibliothèque** : `segmentation_models` (Pavel Yakubovskiy)
-
-### Pipeline d'entraînement
-
-1. **Preprocessing**
-   - Redimensionnement : 2048x1024 → 256x512 (ou 512x1024)
-   - Normalisation : pixels [0, 255] → [0, 1]
-   - Conversion labelIds → 8 catégories
-
-2. **Data Augmentation**
-   - Flip horizontal
-   - Rotation (±15°)
-   - Brightness/Contrast adjustment
-   - Gaussian blur
-
-3. **Entraînement**
-   - Loss : Categorical Cross-Entropy + Dice Loss (pondérée)
-   - Optimiseur : Adam (lr=1e-4)
-   - Batch size : 8-16
-   - Epochs : 50-100
-
-4. **Évaluation**
-   - Mean IoU (mIoU)
-   - Dice Coefficient
-   - Pixel Accuracy
-   - Temps d'inférence
-
-### API de prédiction
-
-- **Framework** : Flask ou FastAPI
-- **Endpoint** : `POST /predict`
-- **Input** : Image (upload ou URL)
-- **Output** : Mask prédit (image PNG + JSON avec classes détectées)
-- **Déploiement** : Azure / Heroku / PythonAnywhere
-
-### Application web
-
-- **Framework** : Streamlit ou Flask
-- **Fonctionnalités** :
-  - Liste des images disponibles (dropdown)
-  - Upload d'image personnalisée
-  - Affichage : Image originale | Mask réel | Mask prédit
-  - Métriques : IoU par classe, temps d'inférence
-- **Déploiement** : Streamlit Cloud / Heroku
+| Méthode | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/` | Health check + infos modèle |
+| GET | `/images` | Liste des images de validation disponibles |
+| GET | `/images/{id}/rgb` | Image RGB originale (PNG) |
+| GET | `/images/{id}/gt` | Masque ground truth colorisé (PNG) |
+| POST | `/predict` | Upload image → masque prédit (PNG) |
+| GET | `/predict/{id}` | Prédiction par ID (PNG) |
 
 ---
 
-## 📈 Performance attendue
+## Les 8 catégories
 
-### Métriques cibles
-
-- **Mean IoU** : > 60% (état de l'art ~80%)
-- **Temps d'inférence** : < 100ms par image (256x512)
-- **Taille du modèle** : < 50 MB
-
-### Déséquilibre des classes
-
-⚠️ **Problème identifié** : Classes très déséquilibrées
-
-- **Classe dominante** : flat (route, trottoir) - ~50% des pixels
-- **Classes minoritaires** : human, vehicle - critiques pour la sécurité !
-
-**Solutions implémentées** :
-- Weighted Loss (poids inversement proportionnels à la fréquence)
-- Data augmentation ciblée
-- Focal Loss (optionnel)
+| ID | Classe | Éléments |
+|----|--------|---------|
+| 0 | void | Pixels non classifiés |
+| 1 | flat | Route, trottoir, parking |
+| 2 | construction | Bâtiments, murs, clôtures |
+| 3 | object | Poteaux, panneaux, feux |
+| 4 | nature | Végétation, terrain |
+| 5 | sky | Ciel |
+| 6 | human | Piétons, cyclistes |
+| 7 | vehicle | Voitures, camions, bus, motos |
 
 ---
 
-## 📦 Livrables
+## Déploiement continu
 
-1. ✅ **Scripts notebook** - Pipeline complet d'entraînement
-2. ⏳ **API déployée** - Flask/FastAPI sur le Cloud
-3. ⏳ **Application web** - Streamlit déployée
-4. ⏳ **Note technique** - 10 pages (état de l'art, résultats, pistes)
-5. ⏳ **Support de présentation** - 30 slides max
-
-Format de nommage : `Nom_Prénom_n°_livrable_mmaaaa`
+Chaque push sur `master` déclenche un workflow GitHub Actions qui se connecte au VPS en SSH, tire le code et rebuilde les containers Docker automatiquement.
 
 ---
 
-## 🧪 Tests
-
-### Test du data loader
-
-```bash
-jupyter notebook notebooks/test_dataloader.ipynb
-```
-
-### Test de l'API (à venir)
-
-```bash
-pytest tests/test_api.py
-```
-
----
-
-## 📚 Ressources
-
-### Papers
-
-- [U-Net](https://arxiv.org/abs/1505.04597) (Ronneberger et al., 2015)
-- [SegNet](https://arxiv.org/abs/1511.00561) (Badrinarayanan et al., 2017)
-- [DeepLabV3+](https://arxiv.org/abs/1802.02611) (Chen et al., 2018)
-- [Cityscapes Dataset](https://arxiv.org/abs/1604.01685) (Cordts et al., 2016)
-
-### Bibliothèques utiles
-
-- [segmentation_models](https://github.com/qubvel/segmentation_models) - Architectures Keras
-- [albumentations](https://albumentations.ai/) - Data augmentation
-- [tensorflow-addons](https://www.tensorflow.org/addons) - Métriques avancées
-
-### Tutoriels
-
-- [Keras Semantic Segmentation](https://keras.io/examples/vision/oxford_pets_image_segmentation/)
-- [TensorFlow Image Segmentation](https://www.tensorflow.org/tutorials/images/segmentation)
-
----
-
-## 🔍 État d'avancement
-
-### ✅ Complété
-
-- [x] Dataset Cityscapes installé et exploré
-- [x] Notebook EDA complet (01_EDA_CLEAN.ipynb)
-- [x] Data loader fonctionnel (à adapter pour Keras)
-- [x] Requirements.txt avec dépendances
-
-### 🚧 En cours
-
-- [ ] Adapter data_loader.py pour Keras
-- [ ] Créer l'architecture U-Net (src/model.py)
-- [ ] Script d'entraînement (src/train.py)
-
-### ⏳ À faire
-
-- [ ] Entraîner le modèle baseline
-- [ ] Optimiser les hyperparamètres
-- [ ] Développer l'API Flask/FastAPI
-- [ ] Créer l'application Streamlit
-- [ ] Déployer sur le Cloud
-- [ ] Rédiger la note technique
-- [ ] Préparer la présentation
-
----
-
-## ⚠️ Points d'attention
-
-1. **Framework Keras** : Le projet utilise Keras (pas PyTorch)
-2. **8 catégories** : Ne pas utiliser les 32 sous-catégories (consigne Franck)
-3. **Déséquilibre** : Implémenter une loss pondérée obligatoirement
-4. **Performance** : Optimiser pour temps d'inférence (système embarqué)
-5. **Déploiement** : Enregistrer une démo vidéo (Heroku est payant)
-
----
-
-## 👥 Équipe
-
-- **Vous** : Segmentation des images
-- **Franck** : Traitement des images (en amont)
-- **Laura** : Système de décision (en aval)
-
----
-
-## 📄 Licence
-
-Ce projet utilise le dataset **Cityscapes** :
-- Usage académique et non-commercial uniquement
-- Pas de redistribution autorisée
-- © Daimler AG, MPI Informatics, TU Darmstadt
-
----
-
-## 📞 Contact
-
-Projet OpenClassrooms - Formation Ingénieur IA
-
----
-
-**Date de création** : 2026-02-02
-**Dernière mise à jour** : 2026-02-09
-**Version** : 1.0
+*Dataset Cityscapes — usage académique uniquement © Daimler AG, MPI Informatics, TU Darmstadt*

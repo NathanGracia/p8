@@ -40,7 +40,7 @@ from predictor import Predictor  # noqa: E402
 
 import os
 
-DATA_ROOT = Path(os.getenv("DATA_ROOT", str(Path(__file__).parent.parent / "data")))
+DATA_ROOT = Path(os.getenv("DATA_ROOT", str(Path(__file__).parent.parent / "samples")))
 MODEL_PATH = Path(os.getenv("MODEL_PATH", str(Path(__file__).parent.parent / "models" / "unet_mobilenet_20260209_132821.h5")))
 
 # ── État global ───────────────────────────────────────────────────────────────
@@ -59,6 +59,8 @@ def scan_val_images() -> List[dict]:
     images = []
     image_id = 0
 
+    if not val_rgb_dir.exists():
+        return images
     for city_dir in sorted(val_rgb_dir.iterdir()):
         if not city_dir.is_dir():
             continue

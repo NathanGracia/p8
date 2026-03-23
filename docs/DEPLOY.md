@@ -102,6 +102,15 @@ Recharger Caddy :
 docker exec caddy caddy reload --config /etc/caddy/Caddyfile
 ```
 
+> ⚠️ **Attention — inode Docker** : si tu édites le Caddyfile directement sur le host, Docker peut garder
+> l'ancien fichier monté (l'inode change). Dans ce cas, `caddy reload` dira "config is unchanged" alors
+> qu'il lit encore l'ancien fichier. Solution : réécrire via `tee` depuis l'intérieur du container, puis
+> redémarrer Caddy :
+> ```bash
+> cat /chemin/vers/Caddyfile | docker exec -i caddy tee /etc/caddy/Caddyfile
+> docker compose restart caddy
+> ```
+
 ---
 
 ## 5. Builder et lancer les containers
@@ -196,3 +205,9 @@ docker compose ps
 # Vérifier le nom du réseau dans docker-compose.yml
 docker network ls
 ```
+
+**Caddy — boucle de redirections 308 sur un sous-domaine** :
+Cause probable : le record DNS Cloudflare est en mode **proxy actif (nuage orange)**.
+Cloudflare intercepte le HTTPS et Caddy reçoit du HTTP → il redirige en HTTPS → boucle infinie.
+Fix : passer le record DNS en **DNS only (nuage gris)** dans le dashboard Cloudflare.
+Caddy obtient alors son certificat Let's Encrypt directement via ACME challenge.

@@ -1,0 +1,33 @@
+Livrable 2 — API
+Projet P8 — OpenClassrooms Ingénieur IA
+Segmentation sémantique pour véhicule autonome
+Auteur : Gracia Nathan — Février 2026
+
+════════════════════════════════════════
+
+LIENS
+
+Code source         https://github.com/NathanGracia/p8  (dossier api/)
+API en production   https://p8-api.nathangracia.com
+Documentation       https://p8-api.nathangracia.com/docs  (Swagger UI interactif)
+
+════════════════════════════════════════
+
+ENDPOINTS
+
+GET  /                   Health check + informations sur le modèle chargé
+GET  /images             Liste des images de validation disponibles
+GET  /images/{id}/rgb    Image RGB originale (PNG)
+GET  /images/{id}/gt     Masque ground truth colorisé (PNG)
+POST /predict            Upload image → masque de segmentation prédit (PNG)
+GET  /predict/{id}       Prédiction par ID d'image (PNG)
+
+════════════════════════════════════════
+
+INFRASTRUCTURE
+
+Framework   : FastAPI + Uvicorn
+Container   : Docker
+Proxy HTTPS : Caddy
+Hébergement : VPS Linux
+CI/CD       : GitHub Actions (déploiement automatique sur git push master)
