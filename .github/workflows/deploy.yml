@@ -17,6 +17,8 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            cd /home/ubuntu/p8
+            set -e
+            cd /opt/p8
             git pull origin master
-            docker compose up -d --build p8-api p8-streamlit
+            docker compose up -d --build
+            docker image prune -f
