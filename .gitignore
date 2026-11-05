@@ -29,6 +29,19 @@ env/
 
 # Claude
 .claude/
+CLAUDE.md
+
+# Docs générés localement
+docs/generate_note_technique.py
+docs/generate_script_ppt.py
+docs/generate_livrables.py
+docs/note_technique_P8.docx
+docs/script_presentation_P8.docx
+
+# Livrables (fichiers lourds ou générés)
+livrables/*.docx
+livrables/*.pdf
+livrables/*.pptx
 
 # Fichiers temporaires
 *.tmp

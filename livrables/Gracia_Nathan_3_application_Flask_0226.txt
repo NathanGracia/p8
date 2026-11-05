@@ -1,0 +1,30 @@
+Livrable 3 — Application web
+Projet P8 — OpenClassrooms Ingénieur IA
+Segmentation sémantique pour véhicule autonome
+Auteur : Gracia Nathan — Février 2026
+
+════════════════════════════════════════
+
+LIENS
+
+Code source              https://github.com/NathanGracia/p8  (dossier app/)
+Application en production  https://p8.nathangracia.com
+
+════════════════════════════════════════
+
+FONCTIONNALITÉS
+
+- Sélection d'une image parmi les 9 images de validation disponibles
+- Affichage de l'image RGB originale
+- Affichage du masque ground truth colorisé (8 classes)
+- Lancement de la prédiction via l'API
+- Affichage côte à côte : image originale | ground truth | masque prédit
+
+════════════════════════════════════════
+
+INFRASTRUCTURE
+
+Framework   : Streamlit
+Container   : Docker
+Hébergement : VPS Linux (même serveur que l'API)
+CI/CD       : GitHub Actions (déploiement automatique sur git push master)

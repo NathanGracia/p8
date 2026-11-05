@@ -32,11 +32,11 @@ CATEGORY_COLORS = {
     "void":         "#000000",
     "flat":         "#804080",
     "construction": "#464646",
-    "object":       "#DCDC00",
-    "nature":       "#6B8E23",
-    "sky":          "#46B4B4",
-    "human":        "#DC143C",
-    "vehicle":      "#00008E",
+    "object":       "#00DCDC",
+    "nature":       "#238E6B",
+    "sky":          "#B48246",
+    "human":        "#3C14DC",
+    "vehicle":      "#8E0000",
 }
 
 

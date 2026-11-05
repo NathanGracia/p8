@@ -1,0 +1,22 @@
+Livrable 1 — Scripts
+Projet P8 — OpenClassrooms Ingénieur IA
+Segmentation sémantique pour véhicule autonome
+Auteur : Gracia Nathan — Février 2026
+
+════════════════════════════════════════
+
+DÉPÔT GITHUB
+https://github.com/NathanGracia/p8
+
+════════════════════════════════════════
+
+CONTENU DU DÉPÔT
+
+src/data_loader.py        Générateur de données Keras (CityscapesSequence) avec augmentation
+src/model.py              Architecture U-Net + MobileNetV2, losses, métriques
+src/train.py              Script d'entraînement (hyperparamètres en arguments CLI)
+src/data_augmentation.py  Pipeline d'augmentation Albumentations
+
+notebooks/01_EDA_CLEAN.ipynb    Exploration et analyse du dataset Cityscapes
+notebooks/02_Modeling.ipynb     Comparaison des 3 expériences d'entraînement
+notebooks/test_dataloader.ipynb Test et visualisation du pipeline de données
