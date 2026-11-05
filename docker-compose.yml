@@ -9,7 +9,7 @@ services:
       - ./samples:/app/samples:ro
       - ./models:/app/models:ro
     ports:
-      - "8010:8000"
+      - "127.0.0.1:8010:8000"
     environment:
       - MODEL_PATH=/app/models/unetmini_20260302_021229.h5
       - DATA_ROOT=/app/samples
@@ -21,7 +21,7 @@ services:
       dockerfile: app/Dockerfile
     container_name: p8-streamlit
     ports:
-      - "8502:8501"
+      - "127.0.0.1:8502:8501"
     environment:
       - API_URL=http://p8-api:8000
     depends_on:
